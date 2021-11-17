@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"strings"
 )
 
 // func main() {
@@ -11,8 +10,16 @@ import (
 // 	fmt.Println(m1 + m2)
 // }
 
+// func main() {
+// 	m1 := "My name"
+// 	m1 = "name"
+// 	fmt.Println(strings.Split(m1, ""))
+// }
 func main() {
-	m1 := "My name"
-	m1 = "name"
-	fmt.Println(strings.ReplaceAll(m1, "m", "NO"))
+	todo()
+}
+func todo() {
+	// var arr [] int
+	arr := []int{1, 2, 3, 4}
+	fmt.Println(arr)
 }

@@ -1,6 +1,13 @@
 package models
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
+
+const (
+	// CollectionArticle holds the name of the articles collection
+	CollectionProduct = "products"
+)
 
 type Product struct {
 	Id       primitive.ObjectID `json:"id" bson:"_id"`

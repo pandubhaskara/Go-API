@@ -1,41 +1,42 @@
 package db
 
 import (
-	"context"
-	"log"
+	"fmt"
 	"os"
-	"time"
 
-	"github.com/joho/godotenv"
-	"github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"gopkg.in/mgo.v2"
 )
 
-type Resource struct {
-	DB *mongo.Database
-}
+var (
+	// Session stores mongo session
+	Session *mgo.Session
 
-func (r *Resource) Close() {
-	logrus.Warning("Closing all db connections")
-}
+	// Mongo stores the mongodb connection string information
+	Mongo *mgo.DialInfo
+)
 
-func Connect() (*Resource, error) {
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Print(err)
+const (
+	// MongoDBUrl is the default mongodb url that will be used to connect to the
+	// database.
+	MongoDBUrl = "mongodb://localhost:27017"
+)
+
+// Connect connects to mongodb
+func Connect() {
+	uri := os.Getenv("MONGO_HOST")
+
+	if len(uri) == 0 {
+		uri = MongoDBUrl
 	}
 
-	host := os.Getenv("MONGO_HOST")
-	dbName := os.Getenv("MONGO_DB_NAME")
-	mongoClient, err := mongo.NewClient(options.Client().ApplyURI(host))
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-
-	err = mongoClient.Connect(ctx)
+	mongo, err := mgo.ParseURL(uri)
+	s, err := mgo.Dial(uri)
 	if err != nil {
-		return nil, err
+		fmt.Printf("Can't connect to mongo, go error %v\n", err)
+		panic(err.Error())
 	}
-	defer cancel()
-
-	return &Resource{DB: mongoClient.Database(dbName)}, nil
+	s.SetSafe(&mgo.Safe{})
+	fmt.Println("Connected to", uri)
+	Session = s
+	Mongo = mongo
 }

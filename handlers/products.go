@@ -1,4 +1,4 @@
-package articles
+package products
 
 import (
 	"net/http"
@@ -28,16 +28,17 @@ func Create(c *gin.Context) {
 }
 
 func List(c *gin.Context) {
-	db := c.MustGet("warehouse").(*mgo.Database)
+	db := c.Set("request-body").(*mgo.Database)
 	products := []models.Product{}
 	err := db.C(models.CollectionProduct).Find(nil).Sort("-updated_on").All(&products)
 	if err != nil {
 		c.Error(err)
 	}
-	c.HTML(http.StatusOK, "product/list", gin.H{
-		"title":    "Prticles",
-		"products": products,
+	c.HTML(http.StatusOK, "products/list", gin.H{
+		"title":    "Products",
+		"articles": products,
 	})
+	c.String(http.StatusOK, "%s\n", products)
 }
 
 func Delete(c *gin.Context) {
